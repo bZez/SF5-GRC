@@ -1,0 +1,106 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        {% if sinistre.assure.impayes %}
+            <span class="text-danger"><i class="fas fa-exclamation-triangle"></i></span>
+        {% endif %}
+        <span class="text-warning"><i class="fas fa-life-ring"></i></span>
+        {{ sinistre.assure.lastName|upper }} {{ sinistre.assure.firstName|capitalize }} - N°ADH: <span
+                class="text-violet">{{ sinistre.assure.adherentNumber }}</span></h4>
+       <a href="#" id="{{ path("view_adherent", {"id": sinistre.assure.id}) }}"
+        class="btn btn-sm bg-violet text-white float-right"
+        onclick="ajaxLoad($(this),$('#sinistre-{{ sinistre.id }} .modal-body'),1)"><i class="fa fas fa-edit"></i></a>
+</div>
+{% block modalbody %}
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-6">
+                <h6 class="text-violet">Type de sinistre</h6>
+                <span class="text-violet">[{{ sinistre.tiers ? 'Avec un tiers' : 'Sans tiers' }}]</span>
+                - {{ sinistre.sinistre.nom }}
+            </div>
+            <div class="col-6">
+                <h6 class="text-violet">Lieu du sinistre</h6>
+                {{ sinistre.codePostal ~ ' ' ~ sinistre.ville|upper }}
+            </div>
+        </div>
+        {% if sinistre.tiers %}
+            {% set infos = sinistre.tiersInformations %}
+            <div class="line"></div>
+            <div class="row">
+                <div class="col-4">
+                    <h6 class="text-violet">Tiers - <span
+                                class="text-violet">[{% if infos.lienTiers is defined %}{{ infos.lienTiers }}{% else %}Aucun lien à l'assuré{% endif %}]</span>
+                    </h6>
+                    {{ infos.nom ? infos.nom|upper : 'Aucun nom fourni' }} {{ infos.prenom ? infos.prenom|capitalize : 'Aucun prénom fourni' }}
+                    <br>
+                    {{ infos.adresseTiers ? infos.adresseTiers : 'Aucune adresse founie' }} <br>
+                    {% if infos.telephoneTiers %}
+                        <a href="tel:{{ infos.telephoneTiers }}" class="btn btn-sm bg-violet text-white"><i
+                                    class="fa fas fa-phone fa-flip-horizontal"></i> {{ infos.telephoneTiers }}</a>
+                    {% endif %}
+                </div>
+                <div class="col-4">
+                    <h6 class="text-violet">Témoin</h6>
+                    {% if infos.nomTemoins or infos.prenomTemoins or infos.adresseTemoins or infos.telephoneTemoins %}
+                        {{ infos.nomTemoins|upper ~ ' ' ~ infos.prenomTemoins|capitalize }} <br>
+                        {{ infos.adresseTemoins }} <br>
+                        {% if infos.telephoneTemoins %}
+                            <a href="tel:{{ infos.telephoneTemoins }}" class="btn btn-sm bg-violet text-white"><i
+                                        class="fa fas fa-phone fa-flip-horizontal"></i> {{ infos.telephoneTemoins }}</a>
+                        {% endif %}
+                    {% else %}
+                        <p>Aucune témoin...</p>
+                    {% endif %}
+                </div>
+                <div class="col-4">
+                    <h6 class="text-violet">Assurance</h6>
+                    {% if infos.assurance or infos.adresseAssurance or infos.telephoneAssurance %}
+                        {{ infos.assurance ? infos.assurance|upper : 'Aucune assurance précisée' }} <br>
+                        {{ infos.adresseTemoins ? infos.adresseTemoins : 'Acune adresse fournie' }} <br>
+                        {% if infos.telephoneAssurance %}
+                            <a href="tel:{{ infos.telephoneAssurance }}" class="btn btn-sm bg-violet text-white"><i
+                                        class="fa fas fa-phone fa-flip-horizontal"></i> {{ infos.telephoneAssurance }}
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <p>Aucune assurance...</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="line"></div>
+        <div class="row">
+            <div class="col-6">
+                <h6 class="text-violet">Date du sinistre</h6>
+                {{ sinistre.dateSinistre.date|date('d/m/Y h:i:s') }}
+            </div>
+            <div class="col-6">
+                <h6 class="text-violet">Date de la déclaration</h6>
+                {{ sinistre.dateDeclaration.date|date('d/m/Y h:i:s') }}
+            </div>
+        </div>
+        <div class="line"></div>
+        <div class="row">
+            <div class="col-12">
+                <h6 class="text-violet">Description</h6>
+                <p class="text-justify">
+                    {{ sinistre.description }}
+                </p>
+            </div>
+        </div>
+        {% if sinistre.fichiers|length > 0 %}
+            <div class="line"></div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="text-violet">Pièce jointe</h6>
+                    <p class="text-justify">
+                        {% for fichier in sinistre.fichiers %}
+                        {% else %}
+                            Aucune pièces jointes
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

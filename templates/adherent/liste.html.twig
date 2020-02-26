@@ -1,0 +1,19 @@
+{% for adherent in adherents %}
+    <tr class="text-center {% if adherent.impayes %}bg-danger {% elseif adherent.sinistres %} bg-warning{% endif %}">
+        <td>{% if(adherent.insee) %}{{ adherent.insee }}{% endif %}</td>
+        <td>{{ adherent.lastName }}</td>
+        <td>{{ adherent.firstName }}</td>
+        <td>{{ adherent.email }}</td>
+        <td><a href="tel:{{ adherent.mobile }}">{{ adherent.mobile }}</a></td>
+        <td>
+            <button value="{{ path("view_adherent", { "id": adherent.id }) }}"
+                    onclick="ajaxGenModal('fiche',$(this),{{ adherent.id }})" class="btn btn-sm bg-violet text-white"><i
+                        class="fa fas fa-eye"></i> Fiche adhérent
+            </button>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="6" class="text-center">Aucun adhérent ne correspond à votre recherche...</td>
+    </tr>
+{% endfor %}

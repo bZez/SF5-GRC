@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <h4 class="pageTitle">Messagerie "Mobilité Internationale"</h4>
+    <hr>
+    <div class="row">
+        <div class="col-3" id="msgList" {% if demandes|length > 0 %} style="overflow-y: scroll;"{% endif %}>
+            {% for item in demandes %}
+                <div class="row mailRow">
+                    <div class="col-12 p-3">
+                        <h6 class="mb-0">Envoi des pièces justificatives<span
+                                    class="float-right small">{{ item.dateEnvoi.date|date('d/m/Y à h:i:s') }}</span>
+                        </h6>
+                        <small>{{ item.assure.email }} - N°ADH: <span
+                                    class="text-violet">{{ item.assure.adherentNumber }}</span>
+                        </small>
+                        <p class="small">Veuillez vérifier les pièces justificaitives.</p>
+                        <p class="assureLink" hidden>
+                            <button value="{{ path("view_adherent", { "id": item.assure.id }) }}"
+                                    onclick="ajaxGenModal('fiche',$(this),{{ item.assure.id }})"
+                                    class="btn btn-sm bg-violet text-white"><i class="fa fas fa-eye"></i> Fiche
+                            </button>
+                        </p>
+                        <div hidden>
+                            <h5>Veuillez vérifier les pièces justificaitives suivantes</h5>
+                            <div class="line"></div>
+                        </div>
+                        <div class="row" hidden>
+                            <div class="col-3 text-center">
+                                <h6>Attestation SS</h6>
+                                <a href="{{ path('download_demande_file',{id:item.id,file:0}) }}"
+                                   class="btn btn-sm bg-violet text-white">
+                                    <i class="fas fa-download fa-2x"></i>
+                                </a>
+                            </div>
+                            <div class="col-3 text-center">
+                                <h6>Attestation ES</h6>
+                                <a href="{{ path('download_demande_file',{id:item.id,file:1}) }}"
+                                   class="btn btn-sm bg-violet text-white">
+                                    <i class="fas fa-download fa-2x"></i>
+                                </a>
+                            </div>
+                            <div class="col-3 text-center">
+                                <h6>RIB</h6>
+                                <a href="{{ path('download_demande_file',{id:item.id,file:2}) }}"
+                                   class="btn btn-sm bg-violet text-white">
+                                    <i class="fas fa-download fa-2x"></i>
+                                </a>
+                            </div>
+                            <div class="line"></div>
+                            {#<button value="{{ path("view-demande-resil", { "id": item.id }) }}"
+                                    onclick="ajaxGenModal('resil',$(this),{{ item.id }})"
+                                    class="btn btn-sm btn btn-sm-success d-inline-block"><i
+                                        class="fa fas fa-eye"></i> Détails
+                            </button>#}
+                            {# #}
+
+                            <div class="col-md-4 text-center">
+                                <a href="{{ path('valid-demande-mobint', {id : item.id}) }}"
+                                        class="btn btn-sm btn-success">Valider</a>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <a {#href="{{ path('decline-demande-retract', {id : item.id}) }}"#}
+                                        class="btn btn-sm btn-warning">Pièces manquantes</a>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <a href="{{ path('decline-demande-mobint', {id : item.id}) }}"
+                                        class="btn btn-sm btn-danger">Décliner</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# <tr>
+                     <td>{{ item.police.beneficiaires[0].assure.adherentNumber }}</td>
+                     #}{#@todo : Dynamiser la récupération du bon assuré#}{#
+                     <td>{{ item.police.beneficiaires[0].assure.firstName ~ ' ' ~ item.police.beneficiaires[0].assure.lastName }}</td>
+                     <td>{{ item.police.finRetractation.date|date('d/m/Y h:i:s') }}</td>
+                     <td>{{ item.dateDemande.date|date('d/m/Y h:i:s') }}</td>
+                     <td>
+                         {% if item.statut == 1  %} <strong style="color: #2ecc71;">Envoyé</strong>
+                         {% elseif  item.statut == 2 %} <strong style="color: #e67e22;">Encours</strong> {% endif %}
+                     </td>
+                     <td></td>
+                     <td>
+
+                     </td>
+                 </tr>#}
+            {% else %}
+                <h6>Aucune demande en cours...</h6>
+            {% endfor %}
+        </div>
+        <div class="col-9 bg-white rounded p-3" id="msgCtn" hidden>
+            {% include 'forms/response.html.twig' %}
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {% if demandes|length > 0 %}
+        <script src="{{ asset('asset/js/mailbox.js') }}"></script>
+    {% endif %}
+{% endblock %}

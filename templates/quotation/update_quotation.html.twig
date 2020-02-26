@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis{% endblock %}
+{% block description %}{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-3 font-weight-normal">Devis N°{{ idDevis }}</h1>
+    <form method="post">
+        {% if errors %}
+            <div class="alert alert-danger">{% for error in errors %}{{ error }}<br>{% endfor %}</div>
+        {% endif %}
+        <div class="row">
+            <div class="col-6">
+                <h4 class="h3 mb-3 font-weight-normal">Informations</h4>
+                <p>Civilité : {{ adherent.gender }}</p>
+                <p>Prénom : {{ adherent.firstName }}</p>
+                <p>Nom : {{ adherent.lastName }}</p>
+                <p>Email : {{ adherent.email }}</p>
+                <p>N° Sécurité sociale
+                    : {{ adherent.insee ? adherent.insee : 'X XX XX XX XXX XXX' }} {{ adherent.inseeKey ?  adherent.inseeKey : "XX" }}</p>
+            </div>
+            <div class="col-6">
+                <h4 class="h3 mb-3 font-weight-normal">Adresse</h4>
+                <p>{{ adherent.address }}<br>
+                {% if adherent.addressComplementary != "" %} {{ adherent.addressComplementary }}<br>{% endif %}
+                {{ adherent.postalCode }} {{ adherent.city }} {{ adherent.country }}</p>
+            </div>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <h4 class="h3 mb-3 font-weight-normal">Devis</h4>
+                {% for warranty in warranties %}
+                    {% for formule in warranty.formules %}
+                        {% if(quotation.formule == formule.id) %}<p>{{ formule.nom }}</p>{% endif %}
+                    {% endfor %}
+                {% endfor %}
+                <p>Période du {{ quotation.startDate }} au {{ quotation.endDate }}</p>
+                {% if(quotation.tarif) %}
+                    <p>
+                        <strong>Tarif : {{ quotation.tarif }} €</strong>
+                    </p>
+                {% endif %}
+            </div>
+            <div class="col-6">
+                <h4 class="h3 mb-3 font-weight-normal">Données contrat</h4>
+                {% if(quotation.formule == 3 or quotation.formule == 4) %}
+                    {% for key,risque in risques %}
+                        <p>{{ key }} : {{ risque }}</p>
+                    {% endfor %}
+                {% endif %}
+                {% if(quotation.paymentType) %}
+                    <p>
+                        Type de payement : {{ quotation.paymentType }} -
+                        {% if(quotation.monthly) %}
+                            Mensuel
+                        {% else %}
+                            Comptant
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+            <div class="line"></div>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% block body %}
+    <h5 class="h3 mb-3 font-weight-normal">Modification d'informations</h5>
+        <form method="post" action="{{ path('adherent_update_infos',{id:adherent.id}) }}"  onsubmit="ajaxEditAdh($(this),$('#fiche-{{ adherent.id }} .modal-body'));return false;">
+            {% if errors %}
+                <div class="alert alert-danger">{% for error in errors %}{{ error }}<br>{% endfor %}</div>
+            {% endif %}
+        <input type="text" name="address" class="form-control" placeholder="Adresse" required value="{{ adherent.address }}">
+        <input type="text" name="addressComplementary" class="form-control mt-3" placeholder="Complément d'adresse" value="{{ adherent.addressComplementary }}">
+        <input type="text" name="postalCode" class="form-control mt-3" placeholder="Code postal" required value="{{ adherent.postalCode }}">
+        <input type="text" name="city" class="form-control mt-3" placeholder="Ville" required value="{{ adherent.city }}">
+        <input type="text" name="country" class="form-control mt-3" placeholder="Pays" required value="{{ adherent.country }}">
+        <input type="hidden" name="csrf_token"
+               value="{{ csrf_token('updateAccountInformations') }}">
+        <button class="btn btn-sm bg-violet text-white mt-3" type="submit">
+           <i class="fa fas fa-check"></i> Valider
+        </button>
+    </form>
+{% endblock %}

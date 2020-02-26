@@ -1,0 +1,142 @@
+{% set nbAdhSante = COUNT.counter(1) %}
+{% set nbAdhAu = COUNT.counter(2) %}
+{% set nbAdhInter = COUNT.counter(3) %}
+{% set mesProduits = [] %}
+{% if app.user.partner %}
+    {% set mesProduits = app.user.partner.produits %}
+{% endif %}
+
+<div class="row">
+
+    {% if ("1" in mesProduits) or is_granted('ROLE_ADMIN') %}
+        <div class="col-md-3 col-sm-12">
+            <h3 class="mb-2"><i class="fas fa-user"></i> Santé</h3>
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    <a href="{{ path('adherents') }}" class="blocDashboard p-3 mb-4 rounded">
+                        <div>
+                            <h1 class="mr-2">{{ nbAdhSante.count }}</h1>
+                            <span>ADHERENTS</span>
+                        </div>
+                        <span>{{ nbAdhSante.countValid }} VALIDES</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if ("2" in mesProduits) or is_granted('ROLE_ADMIN') %}
+    <div class="col-md-3 col-sm-12">
+        <h3 class="mb-2"><i class="fas fa-user"></i> AU</h3>
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <a href="{{ path('adherents') }}" class="blocDashboard p-3 mb-4 rounded">
+                    <div>
+                        <h1 class="mr-2">{{ nbAdhAu.count }}</h1>
+                        <span>ADHERENTS</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if ("3" in mesProduits) or is_granted('ROLE_ADMIN') %}
+    <div class="col-md-3 col-sm-12">
+        <h3 class="mb-2"><i class="fas fa-user"></i> Internationale</h3>
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <a href="{{ path('adherents') }}" class="blocDashboard p-3 mb-4 rounded">
+                    <div>
+                        <h1 class="mr-2">{{ nbAdhInter.count }}</h1>
+                        <span>ADHERENTS</span>
+                    </div>
+                    <span>{{ nbAdhInter.countValid }} VALIDES</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="col-md-3 col-sm-12">
+        <h3 class="mb-2"><i class="fas fa-user-clock"></i> Devis</h3>
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <a href="{{ path('devis') }}" class="blocDashboard p-3 mb-4 rounded">
+                    <div>
+                        <h1 class="mr-2">{{ COUNT.quotations }}</h1>
+                        <span>DEVIS</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<div class="line mt-3 mb-4"></div>
+{% if is_granted('ROLE_PARTNER') %}
+   <div class="container text-center">
+       <h1 style="opacity: .1;font-size: calc(100vw/{{ app.user.partner.nom|length }})">{{ app.user.partner.nom|upper }}</h1>
+   </div>
+{% endif %}
+{% if is_granted('ROLE_ADMIN') %}
+<h3 class="mb-2"><i class="fa fas fa-clock"></i> Transmissions</h3>
+<div class="row">
+    <div class="col-md-2 col-sm-12">
+        <a href="{{ path('teletransmissions') }}" class="blocDashboard p-3 mb-4 rounded">
+            <div>
+                <h1 class="mr-2">{{ COUNT.teletransmissions }}</h1>
+                <span>TELETRANSMISSIONS</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2 col-sm-12">
+        <a href="{{ path('demandes_mobint') }}" class="blocDashboard p-3 mb-4 rounded">
+            <div>
+                <h1 class="mr-2">{{ COUNT.mobints }}</h1>
+                <span>INTERNATIONALES</span>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="line mt-3 mb-4"></div>
+<h3 class="mb-2"><i class="fa fas fa-clock"></i> Résil. / Rétract.</h3>
+<div class="row">
+    <div class="col-md-2 col-sm-12">
+        <a href="{{ path('resiliations') }}" class="blocDashboard p-3 mb-4 rounded">
+            <div>
+                <h1 class="mr-2">{{ COUNT.resiliations }}</h1>
+                <span>RESILIATIONS</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2 col-sm-12">
+        <a href="{{ path('retractations') }}" class="blocDashboard p-3 mb-4 rounded">
+            <div>
+                <h1 class="mr-2">{{ COUNT.retractations }}</h1>
+                <span>RETRACTATIONS</span>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="line mt-3 mb-4"></div>
+<h3 class="mb-2"><i class="fa fas fa-clock"></i> Remb. / PEC</h3>
+<div class="row">
+    <div class="col-md-2 col-sm-12">
+        <a href="{{ path('demandes_remb') }}" class="blocDashboard p-3 mb-4 rounded">
+            <div>
+                <h1 class="mr-2">{{ COUNT.remboursements }}</h1>
+                <span>REMBOURSEMENTS</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2 col-sm-12">
+        <a href="{{ path('demandes_pec') }}" class="blocDashboard p-3 mb-4 rounded">
+            <div>
+                <h1 class="mr-2">{{ COUNT.pec }}</h1>
+                <span>PRISE EN CHARGE</span>
+            </div>
+        </a>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <h4 class="pageTitle">Messagerie "Résiliations"</h4>
+    <hr>
+    <div class="row">
+        <div class="col-3" id="msgList" {% if demandes|length > 0 %} style="overflow-y: scroll;"{% endif %}>
+                {% for item in demandes %}
+                    <div class="row mailRow">
+                        <div class="col-12 p-3">
+                            <h6 class="mb-0">Demande de résiliation <span
+                                        class="float-right small">{{ item.dateDemande.date|date('d/m/Y à h:i:s') }}</span>
+                            </h6>
+                            <small>{{ item.police.beneficiaires[0].assure.email }} - N°ADH: <span
+                                        class="text-violet">{{ item.police.beneficiaires[0].assure.adherentNumber }}</span>
+                            </small>
+                            <p class="assureLink" hidden>
+                                <button value="{{ path("view_adherent", { "id": item.police.beneficiaires[0].assure.id }) }}"
+                                        onclick="ajaxGenModal('fiche',$(this),{{ item.police.beneficiaires[0].assure.id }})"
+                                        class="btn btn-sm bg-violet text-white"><i class="fa fas fa-eye"></i> Fiche
+                                </button>
+                            </p>
+                            <p class="small">{{ item.commentaire[0:60] }}...</p>
+                            <div hidden>
+                                <p>
+                                    <strong>
+                                        {% if item.typeResil == 10 %}
+                                            Offre Santé obligatoire
+                                        {% elseif item.typeResil == 11 %}
+                                            Départ à l'étranger
+                                        {% elseif item.typeResil == 12 %}
+                                            CMU
+                                        {% elseif item.typeResil == 13 %}
+                                            Annule tacite
+                                        {% elseif item.typeResil == 14 %}
+                                            Délai de retractation
+                                        {% else %}
+                                            Autre
+                                        {% endif %}
+                                    </strong>
+                                </p>
+                                <p>{{ item.commentaire|nl2br }}</p>
+                                {% for key,file in item.files %}
+                                    <form method="post" action="{{ path("demandes_download") }}" target="_blank">
+                                        <input type="hidden" name="filename" value="{{ file }}">
+                                        <span>Fichier {{ key +1 }} </span>
+                                        <input type="submit" value="Télécharger"
+                                               class="btn btn-sm bg-violet text-white">
+                                    </form>
+                                {% endfor %}
+                            </div>
+                            <div class="row modal-footer" hidden>
+                                <div class="col-md-4 text-center">
+                                    {#<a href="{{ path('valid-demande-retract', {id : item.id}) }}"
+                                       class="btn btn-sm btn-success">Valider</a>#}
+                                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formValidation">
+                                        Valider
+                                    </button>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    {#<a href="{{ path('decline-demande-retract', {id : item.id}) }}"
+                                       class="btn btn-sm btn-danger">Décliner</a>#}
+                                    <button type="button" class="btn btn-sm btn btn-danger" id="decbtn" data-dismiss="modal">
+                                        Décliner
+                                    </button>
+                                </div>
+                                {% if item.statut != 2 %}
+                                <div class="col-md-4 text-center">
+                                        <button type="button" class="btn btn-sm btn-warning" id="pmbtn" data-dismiss="modal">
+                                            Pièces manquantes
+                                        </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# <tr>
+                         <td>{{ item.police.beneficiaires[0].assure.adherentNumber }}</td>
+                         #}{#@todo : Dynamiser la récupération du bon assuré#}{#
+                         <td>{{ item.police.beneficiaires[0].assure.firstName ~ ' ' ~ item.police.beneficiaires[0].assure.lastName }}</td>
+                         <td>{{ item.police.finRetractation.date|date('d/m/Y h:i:s') }}</td>
+                         <td>{{ item.dateDemande.date|date('d/m/Y h:i:s') }}</td>
+                         <td>
+                             {% if item.statut == 1  %} <strong style="color: #2ecc71;">Envoyé</strong>
+                             {% elseif  item.statut == 2 %} <strong style="color: #e67e22;">Encours</strong> {% endif %}
+                         </td>
+                         <td></td>
+                         <td>
+
+                         </td>
+                     </tr>#}
+                    {% else %}
+                    <h6>Aucune demande en cours...</h6>
+            {% endfor %}
+        </div>
+        <div class="col-9 bg-white rounded p-3" id="msgCtn" hidden>
+            {% include 'forms/response.html.twig' %}
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {% if demandes|length > 0 %} <script src="{{ asset('asset/js/mailbox.js') }}"></script>
+    {% endif %}
+{% endblock %}

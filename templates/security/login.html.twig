@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+    <div class="container-fluid" style="position: absolute; height: calc(100% - 20px); left: -125px;">
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                <form method="post" class="text-center">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    <img src="{{ asset('asset/img/logo-yvon-rvb.png') }}" alt="Logo Yvon GRC" width="140px">
+                    <h6 class="text-violet mt-0">Veuillez vous connecter</h6>
+                    <label for="inputEmail" class="sr-only">Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control text-center" placeholder="Adresse email..." required autofocus>
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control mt-3 text-center" placeholder="Mot de passe..." required>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    {#
+                        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+                        See https://symfony.com/doc/current/security/remember_me.html
+
+                        <div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" name="_remember_me"> Remember me
+                            </label>
+                        </div>
+                    #}
+
+                    <button class="btn btn-sm btn btn-sm-md bg-violet text-white mt-3" type="submit">
+                        <i class="fa fas fa-sign-in-alt"></i> Connexion
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

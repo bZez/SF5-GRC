@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a href="{{ path('index') }}" class="btn btn-sm bg-violet text-white">
+            <i class="fas fa-home"></i>
+            Home
+        </a>
+        &nbsp;
+        <a href="{{ path('mailbox') }}" class="btn btn-sm bg-violet text-white">
+            <i class="fas fa-envelope"></i>
+            Messagerie
+        </a>
+        <button class="btn btn-sm btn btn-sm-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-align-justify"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item expand">
+                    <button class="btn btn-sm text-violet"><i class="fas fa-expand"></i></button>
+                </li>
+                <li class="nav-item print">
+                    <button class="btn btn-sm text-violet"><i class="fas fa-print"></i></button>
+                </li>
+                <li class="nav-item mail">
+                    <button class="btn btn-sm text-violet"><i class="fas fa-at"></i></button>
+                </li>
+                <li class="nav-item menu">
+                    <button class="btn btn-sm text-violet"><i class="fas fa-ellipsis-h"></i></button>
+                </li>
+                <li class="nav-item logout">
+                    <button class="btn btn-sm text-violet"><i class="fas fa-sign-out-alt"></i></button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

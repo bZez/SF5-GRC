@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="row">
+        <div class="col-xl-12">
+            <h2>Devis</h2>
+            {% if quotations|length > 0 %}
+                <table id="TableSort" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Garanties</th>
+                        <th>Date de création du devis</th>
+                        <th>Date de début</th>
+                        {#<th>Etat</th>#}
+                        <th>Adhérent</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for quotation in quotations %}
+                        <tr>
+                            <td>{{ quotation.formule }}</td>
+                            <td>{{ quotation.created }}</td>
+                            <td>{{ quotation.startDate }}</td>
+                            {#<td>{% if quotation.token == "" %}
+                                    Adhésion non finalisée
+                                {% else %}
+                                    Contrat Visualisé<br>
+                                    <a href="mailto:{{ quotation.assure.email }}?body=Signer mon contrat en suivant le lien ci dessous%0D%0A{{ URL_SIGNATURE_CONTRAT }}{{ quotation.token }}">Renvoyer
+                                        le contrat</a>
+                                {% endif %}</td>#}
+                            <td>{{ quotation.assure.firstName }} {{ quotation.assure.lastName }}</td>
+                            <td>{{ quotation.assure.email }}</td>
+                            <td>{{ quotation.assure.mobile }}</td>
+                            <td>
+                                <button value="{{ path("view_adherent", { "id": quotation.assure.id }) }}"
+                                        onclick="ajaxGenModal('quote',$(this),{{ quotation.assure.id }})" class="btn btn-sm bg-violet text-white"><i
+                                            class="fa fas fa-eye"></i> Adhérent
+                                </button>
+                                <a href="{{ path("quotation_update", { 'id': quotation.id}) }}"
+                                                 class="btn btn-sm bg-violet text-white"><i class="fa fas fa-eye"></i> Devis</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aucun devis en cours</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+<script>
+    $(document).ready(function () {
+        $('#TableSort').DataTable({
+                paging: false,
+                order: [[0, "desc"]]
+            }
+        );
+    });
+</script>
+{% endblock %}

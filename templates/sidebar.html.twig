@@ -1,0 +1,128 @@
+<nav id="sidebar">
+    <div class="sidebar-header text-center">
+        <img src="{{ asset('asset/img/logo-yvon-blanc.png') }}" alt="Logo Yvon" width="140px" class="logo-sidebar">
+        <strong>Y</strong>
+    </div>
+    <ul class="list-unstyled">
+        <li>
+            <a href="{{ path('index') }}">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('adherents') }}">
+                <i class="fas fa-home"></i>
+                Adherents
+            </a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+        <li>
+            <a href="{{ path('devis') }}">
+                <i class="fas fa-home"></i>
+                Devis
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('retractations') }}">
+                <i class="fas fa-home"></i>
+                Rétractations
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('resiliations') }}">
+                <i class="fas fa-home"></i>
+                Résiliations
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('teletransmissions') }}">
+                <i class="fas fa-home"></i>
+                Télétransmissions
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('demandes_mobint') }}">
+                <i class="fas fa-home"></i>
+                Mobilité Internationale
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('demandes_pec') }}">
+                <i class="fas fa-home"></i>
+                Demandes PEC
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('demandes_remb') }}">
+                <i class="fas fa-home"></i>
+                Demandes REMB
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('sinistres') }}">
+                <i class="fas fa-home"></i>
+                Déclaration sinistres
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    {#
+    <ul class="list-unstyled components">
+        <li>
+            <a href="#adherents" id="{{ path('adherents') }}">
+                <i class="fas fa-home"></i>
+                Adherents
+            </a>
+        </li>
+        <li>
+            <a href="#devis" id="{{ path('devis') }}">
+                <i class="fas fa-home"></i>
+                Devis
+            </a>
+        </li>
+        <li>
+            <a href="#retractations" id="{{ path('retractations') }}">
+                <i class="fas fa-home"></i>
+                Rétractations
+            </a>
+        </li>
+        <li>
+            <a href="#resiliations" id="{{ path('resiliations') }}">
+                <i class="fas fa-home"></i>
+                Résiliations
+            </a>
+        </li>
+        <li>
+            <a href="#teletransmissions" id="{{ path('teletransmissions') }}">
+                <i class="fas fa-home"></i>
+                Télétransmissions
+            </a>
+        </li>
+        <li>
+            <a href="#demandesMOBINT" id="{{ path('demandes_mobint') }}">
+                <i class="fas fa-home"></i>
+                Mobilité Internationale
+            </a>
+        </li>
+        <li>
+            <a href="#demandesPEC" id="{{ path('demandes_pec') }}">
+                <i class="fas fa-home"></i>
+                Demandes PEC
+            </a>
+        </li>
+        <li>
+            <a href="#demandesREMB" id="{{ path('demandes_remb') }}">
+                <i class="fas fa-home"></i>
+                Demandes REMB
+            </a>
+        </li>
+        <li>
+            <a href="#sinistres" id="{{ path('sinistres') }}">
+                <i class="fas fa-home"></i>
+                Déclaration sinistres
+            </a>
+        </li>
+    </ul>#}
+
+</nav>

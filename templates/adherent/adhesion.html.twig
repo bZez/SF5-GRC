@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fiche adhérent{% endblock %}
+{% block description %}{% endblock %}
+
+{% block body %}
+    <h2>Contrat {{ adhesion.garantie }} du {{ adhesion.startDate|date("d/m/Y") }}</h2>
+    <div class="row">
+        <div class="col-sm-12 col-md-4">
+            <p><b>Date d'effet :</b> {{ adhesion.dateEffet|date("d/m/Y") }}<br>
+                {% if(adhesion.tacite) %} <u>En renouvellement tacite
+                    le</u> {{ adhesion.echeance|date("d/m/Y") }}{% else %}Date de fin : {{ adhesion.dateFin|date("d/m/Y") }}{% endif %}
+                <br>
+                <b>Tarif :</b> {{ adhesion.price }} €<br>
+                <b>Paiement :</b> {% if adhesion.paymentType == 1 %}SEPA{% else %}CB{% endif %}<br>
+                <b>Nb Paiement :</b> {{ adhesion.nbSampling }}</p>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            {% if adhesion.produit == 1 %} {# SANTE #}
+                <h3 class="w-100">Numéro INSEE</h3>
+                {% if adhesion.adherent != '' %}
+                    <strong>{{ adhesion.adherent.insee }} {{ adhesion.adherent.inseeKey }}</strong><br>
+                    Télétransmission : {{ adhesion.adherent.teletransRegime }} {{ adhesion.adherent.teletransCaisse }} {{ adhesion.adherent.teletransCentre }}<br>
+                    Etat : {% if adhesion.adherent.teletransState %}Ok{% else %}Non{%  endif %}
+                {% else %}
+                    <span class="text-danger">
+                        Non renseigné
+                    </span>
+                {% endif %}
+            {% elseif adhesion.produit == 2 or adhesion.produit == 3 %} {# AU et internationale #}
+                <p>
+                    {% if risques|length > 0 %}
+                        {% for key, risque in risques %}
+                            <strong>{{ key }} :</strong> {{ risque }} <br>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-danger">
+                        Non renseigné
+                    </span>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        <div class="col-sm-12 col-md-4 text-center">
+            {% if adhesion.contract %}
+                <p><a href="{{ path('adherent_genere_contrat', {"id":id,"idAdhesion": adhesion.id}) }}"
+                   class="btn text-white showable bg-violet w-100 m-auto">
+                    <i class="fa fas fa-download"></i> Télécharger mon contrat
+                </a></p>
+            {% endif %}
+            {#<p>Génération de la carte de mutuelle : {{ adhesion.cardGenerationDate }}</p>#}
+            {% if adhesion.certificateCivilLiability %}
+                {% if adhesion.produit == 3 %}
+                    <p><a
+                                href="{{ path('adherent_genere_attestation', {"id": id, "idAdhesion": adhesion.id,'lang':'fr'}) }}"
+                                class="mt-2 btn text-white showable bg-violet w-100">Attestation d'assurance FR</a></p>
+                    <p><a
+                                href="{{ path('adherent_genere_attestation', {"id": id, "idAdhesion": adhesion.id,'lang':'en'}) }}"
+                                class="mt-2 btn text-white showable bg-violet w-100">Attestation d'assurance EN</a></p>
+                    <p><a
+                                href="{{ path('adherent_genere_attestation', {"id": id, "idAdhesion": adhesion.id,'lang':'es'}) }}"
+                                class="mt-2 btn text-white showable bg-violet w-100">Attestation d'assurance ES</a></p>
+                {% else %}
+                    <p><a
+                                href="{{ path('adherent_genere_attestation', {"id": id, "idAdhesion": adhesion.id}) }}"
+                                class="mt-2 btn text-white showable bg-violet w-100">Attestation simplifiée</a></p>
+                    <p><a
+                                href="{{ path('adherent_genere_attestation', {"id": id, "idAdhesion": adhesion.id, "full": 1}) }}"
+                                class="mt-2 btn text-white showable bg-violet w-100">Attestation complète</a></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="line"></div>
+    <h3 class="text-rose">Mes documents :</h3>
+    <div class="row">
+        {% for document in adhesion.documents %}
+            <div class="col text-center">
+                <a href="{{ document.fichier }}" class="btn text-white showable bg-violet w-100 mt-3" target="_blank"><i
+                            class="fa fas fa-download"></i> {{ document.nom }}</a>
+            </div>
+        {% endfor %}
+    </div>
+    {#       {% if adhesion.contract %}<p><a href="{{ path('front_genere_contrat', {"idAdhesion": adhesion.id}) }}">Télécharger mes contrats</a></p>{% endif %}
+           {% if adhesion.dataProtectionCharter %}<p><a href="{{ adhesion.dataProtectionCharter }}">Charte de protection des données</a></p>{% endif %}
+           {% if adhesion.ipid %}<p><a href="{{ adhesion.ipid }}">IPID</a></p>{% endif %}
+           {% if adhesion.status %}<p><a href="{{ adhesion.status }}">Statuts</a></p>{% endif %}
+           {% if adhesion.generalCondition %}<p><a href="{{ adhesion.generalCondition }}">Conditions générales</a></p>{% endif %} #}
+    <div class="line"></div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-rose">Mes quittances :</h3>
+            <div class="rounded" style="overflow: hidden">
+                <table class="table table-striped bg-white mt-5" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Type de paiement</th>
+                        <th>Tarif</th>
+                        <th>Date de la facture</th>
+                        <th>Statut</th>
+                        <th>Date de paiement</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for payment in adhesion.payments %}
+                        <tr>
+                            <td>
+                                {% if payment.paymentType == 1 %}
+                                    SEPA
+                                {% else %}
+                                    CB
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ payment.price }} €
+                            </td>
+                            <td>
+                                {{ payment.deadlineDate }}
+                            </td>
+                            <td>
+                                {% if payment.status == 1 %}
+                                    émise
+                                {% elseif payment.status == 2 %}
+                                    Encaissé
+                                {% elseif payment.status == 3 %}
+                                    Impayé
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ payment.paymentDate }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

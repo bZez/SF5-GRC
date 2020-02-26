@@ -1,0 +1,182 @@
+{#{{ dump(demande) }}#}
+<div class="modal-header">
+    <h4 class="modal-title">{{ demande.police.beneficiaires[0].assure.lastName|upper }} {{ demande.police.beneficiaires[0].assure.firstName|capitalize }}
+        -
+        N°ADH: <span class="text-violet">{{ demande.police.beneficiaires[0].assure.adherentNumber }}</span></h4>
+    {% if demande.files|length > 0 %}
+    <a class="btn btn-sm bg-violet text-white btn btn-sm_validDemande float-right" target="_blank"
+       href=""><i class="fas fa-eye"></i>
+        Justificatif</a>
+    {% else %}
+        <span class="text-violet float-right">
+            Aucun justificatif</span>
+
+    {% endif %}
+</div>
+{% block modalbody %}
+    <div class="modal-body">
+        <h6>Demande de résiliation en date du <span
+                    class="text-violet">{{ demande.dateDemande.date|date('d/m/y à H:i:s') }}</span></h6>
+        <p>
+            <strong>
+                {% if demande.typeResil == 10 %}
+                    Offre Santé obligatoire
+                {% elseif demande.typeResil == 11 %}
+                    Départ à l'étranger
+                {% elseif demande.typeResil == 12 %}
+                    CMU
+                {% elseif demande.typeResil == 13 %}
+                    Annule tacite
+                {% elseif demande.typeResil == 14 %}
+                    Délai de retractation
+                {% else %}
+                    Autre
+                {% endif %}
+            </strong>
+        </p>
+        <p>
+            {{ demande.commentaire|nl2br }}
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn btn-sm-success" data-toggle="modal" data-target="#formValidation">
+            Valider
+        </button>
+        {% if demande.statut != 2 %}
+            <button type="button" class="btn btn-sm btn btn-sm-warning" id="pmbtn btn-sm" data-dismiss="modal">
+                Pièces manquantes
+            </button>
+        {% endif %}
+        {#        <a href="{{ path('valid-demande-resil', {id : demande.id}) }}" class="btn btn-sm btn btn-sm-success">Valider</a>#}
+        <button type="button" class="btn btn-sm btn btn-sm-danger" id="decbtn btn-sm" data-dismiss="modal">
+            Décliner
+        </button>
+    </div>
+{% endblock %}
+<div class="modal" tabindex="-1" role="dialog" id="formValidation">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Validation de résiliation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formValid">
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Remboursement</h6>
+                        </div>
+                        <div class="col-6">
+                            Avec
+                            <input type="radio" name="validationType" value="1" id="avecRemb">
+                        </div>
+                        <div class="col-6">
+                            Sans
+                            <input type="radio" name="validationType" value="2">
+                        </div>
+                    </div>
+                    <div class="row" id="rowRemb" hidden>
+                        <div class="col-12">
+                            <h6>Montant du remboursement</h6>
+                            <input type="text" name="montantRemboursement" value="0.00" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Date de fin</h6>
+                            <input type="date" name="dateFin" value="" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row" hidden>
+                        <div class="col-12">
+                            <input type="text" name="motif" value="{{ demande.police.resiliationMotif }}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn btn-sm-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-sm btn btn-sm-primary" id="submit" data-dismiss="modal">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% block javascripts %}
+    <script>
+        $('#formValid').change(function () {
+            if ($('#avecRemb').is(':checked')) {
+                $('#rowRemb').removeAttr('hidden');
+            } else {
+                $('#rowRemb').attr('hidden', true).find('input[type=number]').val('0.00');
+            }
+        });
+        $('#submit').click(function () {
+            $.post("{{ path('valid-demande-resil', {id : demande.id}) }}", $("#formValid").serialize()).done(function () {
+                ajaxLoad(null, null, null, '{{ path('resiliations') }}');
+            });
+        });
+        $('#pmbtn btn-sm').click(function () {
+            $(this).hide();
+            $.get("{{ path('pm-demande-resil', {id : demande.id}) }}", function () {
+                ajaxLoad(null, null, null, '{{ path('resiliations') }}');
+            });
+        });
+        $('#decbtn btn-sm').click(function () {
+            $.get("{{ path('decline-demande-resil', {id : demande.id}) }}", function () {
+                ajaxLoad(null, null, null, '{{ path('resiliations') }}');
+            });
+        })
+    </script>
+{% endblock %}
+{#
+
+{% block modalbody %}
+    <div class="modal-body">
+        <form method="post" action="{{ path('valid_demande_teletransmission', {id : demande.id}) }}">
+            <div class="form-row">
+                <div class="col">
+                    <label>Insee</label>
+                    <input name="insee" type="text" required value="{{ demande.police.beneficiaires[0].assure.insee|trim }}" class="form-control">
+                </div>
+                <div class="col-4">
+                    <label>Clé</label>
+                    <input name="inseeKey" type="text" required value="{{ demande.police.beneficiaires[0].assure.inseeKey|trim }}"
+                           class="form-control">
+                </div>
+            </div>
+            <div class="line"></div>
+            <div class="form-row">
+                <div class="col">
+                    <label>IBAN</label>
+                    <input name="iban" type="text" value="{{ demande.police.beneficiaires[0].assure.iban }}" readonly class="form-control">
+                </div>
+            </div>
+            <div class="line"></div>
+            <div class="form-row">
+                <div class="col">
+                    <label>TRS Régime</label>
+                    <input name="teletransRegime" required type="number"
+                           value="{{ demande.police.beneficiaires[0].assure.teletransRegime|trim }}" class="form-control">
+                </div>
+                <div class="col">
+                    <label>TRS Caisse</label>
+                    <input name="teletransCaisse" required type="number"
+                           value="{{ demande.police.beneficiaires[0].assure.teletransCaisse|trim }}" class="form-control">
+                </div>
+                <div class="col">
+                    <label>TRS Centre</label>
+                    <input name="teletransCentre" required type="number"
+                           value="{{ demande.police.beneficiaires[0].assure.teletransCentre|trim }}" class="form-control">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-sm bg-violet text-white btn btn-sm_validDemande">Valider</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}#}

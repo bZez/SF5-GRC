@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <form action="{{ path('search_adherent') }}" method="post" onsubmit="ajaxSearchAdh($(this));return false;">
+        <div class="input-group">
+            <input name="search" class="form-control"
+                   placeholder="Rechercher un adhérent par nom, prénom, téléphone, mail, etc..." required>
+            <div class="input-group-append">
+                <button class="btn btn-sm bg-violet text-white" type="submit"><i class="fa fas fa-search"></i> Rechercher
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="line"></div>
+    <table class="table table-striped table-bordered" style="width:100%">
+        <thead>
+        <tr>
+            <th class="col-2">INSEE</th>
+            <th class="col-2">Nom</th>
+            <th class="col-2">Prénom</th>
+            <th class="col-2">Email</th>
+            <th class="col-2">Mobile</th>
+            <th class="col-2">Fiche</th>
+        </tr>
+        </thead>
+        <tbody id="ajax-result">
+        </tbody>
+    </table>
+    {% if is_granted('ROLE_PARTNER') %}
+        <div class="container text-center">
+            <h1 style="opacity: .1;font-size: calc(100vw/{{ app.user.partner.nom|length }})">{{ app.user.partner.nom|upper }}</h1>
+        </div>
+    {% endif %}
+{% endblock %}
